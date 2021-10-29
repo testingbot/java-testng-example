@@ -22,7 +22,7 @@ import java.rmi.UnexpectedException;
  */
 public class TestBase  {
 
-    public String buildTag = System.getenv("BUILD_TAG");
+    public String buildTag = System.getenv("TB_BUILD_NAME");
 
     public String key = System.getenv("TESTINGBOT_KEY");
 
