@@ -5,7 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      TESTINGBOT_KEY: ${{ secrets.TESTINGBOT_KEY }}
+      TESTINGBOT_SECRET: ${{ secrets.TESTINGBOT_SECRET }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
