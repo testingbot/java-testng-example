@@ -12,8 +12,10 @@ import org.testng.annotations.Listeners;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URL;import java.util.HashMap;
 import java.rmi.UnexpectedException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Simple TestNG test which demonstrates being instantiated via a DataProvider in order to supply multiple browser combinations.
@@ -47,9 +49,9 @@ public class TestBase  {
     @DataProvider(name = "hardCodedBrowsers", parallel = true)
     public static Object[][] testingbotBrowserDataProvider(Method testMethod) {
         return new Object[][]{
-                new Object[]{"MicrosoftEdge", "16", "Windows 10"},
-                new Object[]{"chrome", "latest", "MOJAVE"},
-                new Object[]{"firefox", "latest-1", "Windows 7"},
+                new Object[]{"MicrosoftEdge", "latest", "Windows 10"},
+                new Object[]{"chrome", "latest", "VENTURA"},
+                new Object[]{"firefox", "latest-1", "Windows 11"},
         };
     }
 
@@ -76,24 +78,25 @@ public class TestBase  {
      * @param browser Represents the browser to be used as part of the test run.
      * @param version Represents the version of the browser to be used as part of the test run.
      * @param os Represents the operating system to be used as part of the test run.
-     * @param methodName Represents the name of the test case that will be used to identify the test on TestingBot
+     * @param testName Represents the name of the test case that will be used to identify the test on TestingBot
      * @return
      * @throws MalformedURLException if an error occurs parsing the url
      */
-    protected void createDriver(String browser, String version, String os, String methodName)
+    protected void createDriver(String browser, String version, String os, String testName)
             throws MalformedURLException, UnexpectedException {
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         capabilities.setCapability(CapabilityType.BROWSER_NAME, browser);
-        capabilities.setCapability(CapabilityType.VERSION, version);
-        capabilities.setCapability(CapabilityType.PLATFORM, os);
-        capabilities.setCapability("name", methodName);
+        capabilities.setCapability(CapabilityType.BROWSER_VERSION, version);
+        capabilities.setCapability(CapabilityType.PLATFORM_NAME, os);
 
+        Map<String, Object> testingBotOptions = new HashMap<>();
+        testingBotOptions.put("name", testName);
         if (buildTag != null) {
-            capabilities.setCapability("build", buildTag);
+            testingBotOptions.put("build", buildTag);
         }
+        capabilities.setCapability("tb:options", testingBotOptions);
 
-        // Launch remote browser and set it as the current thread
         webDriver.set(new RemoteWebDriver(
                 new URL("https://" + key + ":" + secret + "@hub.testingbot.com/wd/hub"),
                 capabilities));
@@ -105,8 +108,7 @@ public class TestBase  {
 
     /**
      * Method that gets invoked after test.
-     * Dumps browser log and
-     * Closes the browser
+     * Dumps browser log and closes the browser
      */
     @AfterMethod
     public void tearDown(ITestResult result) throws Exception {

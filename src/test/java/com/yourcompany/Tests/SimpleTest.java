@@ -19,12 +19,7 @@ public class SimpleTest extends TestBase {
         this.createDriver(browser, version, os, method.getName());
         WebDriver driver = this.getWebDriver();
 
-        driver.get("https://www.google.com/ncr");
-        WebElement element = driver.findElement(By.name("q"));
-        element.sendKeys("TestingBot");
-        element.submit();
-        Thread.sleep(5000);
-
-        Assert.assertEquals("TestingBot - Google Search", driver.getTitle());
+        driver.get("https://testingbot.com");
+        Assert.assertEquals("TestingBot: Cross Browser Testing and Mobile App Testing", driver.getTitle());
     }
 }
