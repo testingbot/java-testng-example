@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/testingbot/java-testng-example.svg?branch=master)](https://travis-ci.org/testingbot/java-testng-example)
-
 ## TestingBot - Java & TestNG
 
 TestingBot provides an online grid of browsers and mobile devices to run Automated tests on via Selenium WebDriver.
