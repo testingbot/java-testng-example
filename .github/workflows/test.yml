@@ -10,22 +10,14 @@ jobs:
       TESTINGBOT_SECRET: ${{ secrets.TESTINGBOT_SECRET }}
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v4
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-version: '11'
-
-    - name: Cache Maven dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        cache: 'maven'
 
     - name: Build and test with Maven
       run: mvn clean test
