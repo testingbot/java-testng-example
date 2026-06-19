@@ -1,19 +1,19 @@
 package com.yourcompany.Tests;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;import java.util.HashMap;
-import java.rmi.UnexpectedException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,27 +83,45 @@ public class TestBase  {
      * @throws MalformedURLException if an error occurs parsing the url
      */
     protected void createDriver(String browser, String version, String os, String testName)
-            throws MalformedURLException, UnexpectedException {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-
-        capabilities.setCapability(CapabilityType.BROWSER_NAME, browser);
-        capabilities.setCapability(CapabilityType.BROWSER_VERSION, version);
-        capabilities.setCapability(CapabilityType.PLATFORM_NAME, os);
+            throws MalformedURLException {
+        MutableCapabilities options = optionsForBrowser(browser);
+        options.setCapability("browserVersion", version);
+        options.setCapability("platformName", os);
 
         Map<String, Object> testingBotOptions = new HashMap<>();
         testingBotOptions.put("name", testName);
         if (buildTag != null) {
             testingBotOptions.put("build", buildTag);
         }
-        capabilities.setCapability("tb:options", testingBotOptions);
+        options.setCapability("tb:options", testingBotOptions);
 
         webDriver.set(new RemoteWebDriver(
                 new URL("https://" + key + ":" + secret + "@hub.testingbot.com/wd/hub"),
-                capabilities));
+                options));
 
         // set current sessionId
         String id = ((RemoteWebDriver) getWebDriver()).getSessionId().toString();
         sessionId.set(id);
+    }
+
+    /**
+     * Returns the Selenium 4 {@link MutableCapabilities} (browser Options) instance
+     * matching the requested browser name.
+     *
+     * @param browser the browser name as supplied by the DataProvider
+     * @return the matching browser Options instance
+     */
+    private MutableCapabilities optionsForBrowser(String browser) {
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                return new ChromeOptions();
+            case "firefox":
+                return new FirefoxOptions();
+            case "microsoftedge":
+                return new EdgeOptions();
+            default:
+                throw new IllegalArgumentException("Unsupported browser: " + browser);
+        }
     }
 
     /**
