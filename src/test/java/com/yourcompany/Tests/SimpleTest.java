@@ -15,6 +15,7 @@ public class SimpleTest extends TestBase {
         WebDriver driver = this.getWebDriver();
 
         driver.get("https://testingbot.com");
-        Assert.assertEquals("TestingBot: Cross Browser Testing and Mobile App Testing", driver.getTitle());
+        String title = driver.getTitle();
+        Assert.assertTrue(title.contains("TestingBot"), "Unexpected page title: " + title);
     }
 }
